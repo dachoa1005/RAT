@@ -163,7 +163,9 @@ bool send_file(string file_name, string file_path, int socket)
             cout << "Error sending file." << endl;
             return false;
         }
+        cout << buffer;
         memset(buffer, 0, 1024);
+
     }
     strcpy(buffer, "\e");
     send(socket, buffer, sizeof(buffer), 0);
@@ -177,6 +179,7 @@ bool recv_file(string file_name, string file_path, int socket)
 {
     ofstream file(file_path);
     char buffer[1024];
+    memset(buffer, 0, 1024);
     while (true)
     {
         if (recv(socket, buffer, 1024, 0) <= 0)
@@ -188,7 +191,7 @@ bool recv_file(string file_name, string file_path, int socket)
             break;
         }
         file << buffer;
-        // cout << buffer;
+        cout << buffer;
         memset(buffer, 0, 1024);
     }
     file.close();

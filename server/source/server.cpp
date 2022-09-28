@@ -16,7 +16,7 @@
 
 using namespace std;
 
-// string SAVE_PLACE{"/home/dachoa1005/Desktop/RAT-project/server/"};
+string FILE_SAVE_PLACE{"/home/dachoa1005/Desktop/RAT/server/recv_files/"};
 
 
 int main(int argc, const char **argv)
@@ -26,10 +26,11 @@ int main(int argc, const char **argv)
     //     cerr << "Usage port" << endl;
     //     return 1;
     // }
+    int portno = 8001; // set portnumber
+    char const *serverIP = "127.0.0.1";
 
     cout << "Waiting for client to connect" << endl;
 
-    int portno = 8000; // set portnumber
 
     struct sockaddr_in servAddr;
 
@@ -81,6 +82,9 @@ int main(int argc, const char **argv)
     char buffer[1024] = {};
     string filename{""};
     string filepath{""};
+    string savepath{""};
+    char tempBuffer[1024] = {};
+
     while (1)
     {
         cout << "--------------------------------" << endl;
@@ -107,7 +111,8 @@ int main(int argc, const char **argv)
             filename = filepath.substr(filepath.find_last_of("/\\")+1);
             // cout << filename << endl;
             //send file name
-            send(newSockDes, filename.c_str(), sizeof(filename), 0);// send file name
+            strcpy(tempBuffer,filename.c_str());
+            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);// send file name
             send_file(filename, filepath, newSockDes);
             cout << "Send file success" << endl;
             break;
@@ -120,16 +125,43 @@ int main(int argc, const char **argv)
             memset(buffer, 0, sizeof(buffer));
             cout << "Enter file path: " << endl;
             getline(cin, filepath);
-            cout << "filepath: " << filepath << endl;
-            int n = send(newSockDes, filepath.c_str(), 1024, 0); //send filepath to client
+            // cout << "filepath: " << filepath << endl;
+            strcpy(tempBuffer, filepath.c_str());
+            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); //send filepath to client
             // cout << "Byte sent: " << n << endl;
             filename = filepath.substr(filepath.find_last_of("/\\")+1);
             cout << "filename: " << filename << endl;
-            string savepath = "/home/dachoa1005/Desktop/RAT/server/recv_files/" + filename;
+            savepath = FILE_SAVE_PLACE + filename;
             recv_file(filename, savepath, newSockDes);
             break;
         }
-        case 3:
+
+        case 3: //create file 
+        {
+            break;
+        }
+
+        case 4: //delete file
+        {
+            break;
+        }
+
+        case 5: //copy file
+        {
+            break;
+        }
+
+        case 6: //move file
+        {
+            break;
+        }
+
+        case 7: //rename file
+        {
+            break;
+        }
+
+        case 10:
         {
             // exit
             cout << "Exit" << endl;
@@ -139,6 +171,7 @@ int main(int argc, const char **argv)
             exit(0);
             break;
         }
+
         default:
         {
             cout << "Invalid choice" << endl;

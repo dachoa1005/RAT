@@ -6,7 +6,7 @@ run:
 	mkdir -p build
 	g++ source/*.cpp ../file_manager/file_manager.cpp -o build/client
 	./build/client
-
+	
 clean:
 	rm -rf build
 

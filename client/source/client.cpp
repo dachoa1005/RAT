@@ -16,6 +16,8 @@
 
 using namespace std;
 
+string FILE_SAVE_PLACE{"/home/dachoa1005/Desktop/RAT/client/recv_files/"};
+
 int main(int argc, char const *argv[])
 {
     // if (argc < 2)
@@ -24,8 +26,8 @@ int main(int argc, char const *argv[])
     //     exit(0);
     // }
 
+    int portno = 8001; // portnumber
     char const *serverIP = "127.0.0.1";
-    int portno = 8000; // portnumber
 
     struct hostent *host = gethostbyname(serverIP);
 
@@ -51,6 +53,9 @@ int main(int argc, char const *argv[])
     // Sau khi connect thành công, bắt đầu giao tiếp
     int choice{0};
     char msg[1024];
+    string filename{""};
+    string filepath{""};
+    string savepath{""};
     while (1)
     {
         cout << "----------------------------------------" << endl;
@@ -58,8 +63,6 @@ int main(int argc, char const *argv[])
         memset(msg, 0, sizeof(msg));
         read(clientSockfd, &choice, sizeof(choice));
         // cout << "Choice: " << choice+1 << endl;
-        string filename{""};
-        string filepath{""};
         switch (choice)
         {
         case 1:
@@ -68,10 +71,11 @@ int main(int argc, char const *argv[])
             memset(msg, 0, sizeof(msg));
             cout << "Receive file from server" << endl;
             recv(clientSockfd, msg, sizeof(msg), 0); // receive file name
+            cout << "File name: " << msg << endl;
             filename = "new_" + string(msg);
-            filepath = "/home/dachoa1005/Desktop/RAT/client/recv_files/" + filename;
+            savepath = FILE_SAVE_PLACE + filename;
             // memset(&msg,0,sizeof(msg)); //clear buffer before recive file
-            recv_file(filename, filepath, clientSockfd);
+            recv_file(filename, savepath, clientSockfd);
             cout << "Receive file success" << endl;
             break;
         }
@@ -91,7 +95,7 @@ int main(int argc, char const *argv[])
         }
         case 3:
         {
-            
+
             cout << "Server end the session" << endl;
             close(clientSockfd);
             exit(0);
