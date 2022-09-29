@@ -93,7 +93,31 @@ int main(int argc, char const *argv[])
             cout << "Sending file success" << endl;
             break;
         }
+
         case 3:
+        {
+            ifstream file;
+            file.open("temp.txt");
+            string command;
+            while (true)
+            {
+                memset(msg, 0, sizeof(msg));
+                recv(clientSockfd, msg, sizeof(msg), 0);
+                command = string(msg);
+                if (strcmp(msg, "exit") == 0)
+                {
+                    cout << "Exit command" << endl;
+                    break;
+                }
+                
+                cout << "Command: " << command << endl;
+                command = command + " > temp.txt";
+                system(command.c_str());
+            }
+
+            break;
+        }
+        case 0:
         {
 
             cout << "Server end the session" << endl;

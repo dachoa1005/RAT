@@ -22,10 +22,10 @@ bool create_file(string file_name, string file_path)
     ofstream file(path);
     if (!file.is_open())
     {
-        cout << "Error creating file" << endl;
+        // cout << "Error creating file" << endl;
         return false;
     }
-    cout << "File created" << endl;
+    // cout << "File created" << endl;
     file.close();
     return true;
 }
@@ -36,11 +36,23 @@ bool create_file(string file_path)
     ofstream file(path);
     if (!file.is_open())
     {
-        cout << "Error creating file" << endl;
+        // cout << "Error creating file" << endl;
         return false;
     }
-    cout << "File created" << endl;
+    // cout << "File created" << endl;
     file.close();
+    return true;
+}
+
+bool delete_file(string file_path)
+{
+    
+    if (remove(file_path.c_str()) != 0)
+    {
+        // cout << "Error deleting file" << endl;
+        return false;
+    }
+    // cout << "File deleted" << endl;
     return true;
 }
 
@@ -49,10 +61,10 @@ bool delete_file(string file_name, string file_path)
     string path = file_path + "/" + file_name;
     if (remove(path.c_str()) != 0)
     {
-        cout << "Error deleting file" << endl;
+        // cout << "Error deleting file" << endl;
         return false;
     }
-    cout << "File deleted" << endl;
+    // cout << "File deleted" << endl;
     return true;
 }
 
@@ -163,7 +175,7 @@ bool send_file(string file_name, string file_path, int socket)
             cout << "Error sending file." << endl;
             return false;
         }
-        cout << buffer;
+        // cout << buffer;
         memset(buffer, 0, 1024);
 
     }
@@ -191,7 +203,7 @@ bool recv_file(string file_name, string file_path, int socket)
             break;
         }
         file << buffer;
-        cout << buffer;
+        // cout << buffer;
         memset(buffer, 0, 1024);
     }
     file.close();

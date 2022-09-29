@@ -90,7 +90,9 @@ int main(int argc, const char **argv)
         cout << "--------------------------------" << endl;
         cout << "1. Send file to client" << endl;
         cout << "2. Get file from client" << endl;
-        cout << "3. Exit" << endl;
+        cout << "3. Terminal" << endl;
+        cout << "0. Exit" << endl;
+
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
@@ -136,32 +138,29 @@ int main(int argc, const char **argv)
             break;
         }
 
-        case 3: //create file 
+        case 3: //terminal
         {
+            string command;
+            while(true)
+            {
+                cout << ">";
+                getline(cin, command);
+                if(command == "exit")
+                {
+                    break;
+                }
+                strcpy(tempBuffer, command.c_str());
+                send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
+                memset(tempBuffer, 0, sizeof(tempBuffer));
+                
+            }
+
+
+
             break;
         }
 
-        case 4: //delete file
-        {
-            break;
-        }
-
-        case 5: //copy file
-        {
-            break;
-        }
-
-        case 6: //move file
-        {
-            break;
-        }
-
-        case 7: //rename file
-        {
-            break;
-        }
-
-        case 10:
+        case 0:
         {
             // exit
             cout << "Exit" << endl;

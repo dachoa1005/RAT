@@ -4,7 +4,9 @@
 #include <string>
 
     bool create_file(std::string file_name,std::string file_path);
+    bool create_file(std::string file_path);
     bool delete_file(std::string file_name,std::string file_path);
+    bool delete_file(std::string file_path);
     bool copy_file(std::string file_name, std::string file_path, std::string dest_path);
     bool move_file(std::string file_name,std::string file_path, std::string dest_path);
 
