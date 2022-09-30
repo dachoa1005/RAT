@@ -16,7 +16,7 @@
 
 using namespace std;
 
-string FILE_SAVE_PLACE{"/home/dachoa1005/Desktop/RAT/server/recv_files/"};
+string FILE_SAVE_PLACE{"/home/dachoa1005/WorkSpace/RAT/server/recv_files/"};
 
 
 int main(int argc, const char **argv)
@@ -26,7 +26,10 @@ int main(int argc, const char **argv)
     //     cerr << "Usage port" << endl;
     //     return 1;
     // }
-    int portno = 8001; // set portnumber
+    // int portno = 8001; // set portnumber
+    int portno{0};
+    cout << "Enter port number: ";
+    cin >> portno;
     char const *serverIP = "127.0.0.1";
 
     cout << "Waiting for client to connect" << endl;
@@ -147,12 +150,21 @@ int main(int argc, const char **argv)
                 getline(cin, command);
                 if(command == "exit")
                 {
+                    strcpy(tempBuffer, command.c_str());
+                    send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
                     break;
                 }
                 strcpy(tempBuffer, command.c_str());
                 send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
                 memset(tempBuffer, 0, sizeof(tempBuffer));
-                
+                recv_file("temp.txt", FILE_SAVE_PLACE + "temp.txt", newSockDes);
+                ifstream fin(FILE_SAVE_PLACE + "temp.txt");
+                string line;
+                while(getline(fin, line))
+                {
+                    cout << line << endl;
+                }
+                fin.close();
             }
 
 

