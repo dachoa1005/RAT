@@ -94,7 +94,7 @@ int main(int argc, char const *argv[])
             memset(msg, 0, sizeof(msg));
             cout << "Sending file" << endl;
             int n = recv(clientSockfd, msg, sizeof(msg), 0); // receive file path
-            cout << "Byte received: " << n << endl;
+            // cout << "Byte received: " << n << endl;
             cout << "File path: " << msg << endl;
             filepath = string(msg);
             filename = filepath.substr(filepath.find_last_of("/\\") + 1);
@@ -129,7 +129,7 @@ int main(int argc, char const *argv[])
                 {
                     cout << line << endl;
                 }
-                file << "";
+                // file << "";
                 file.close();
                  
                 send_file("temp.txt", "temp.txt", clientSockfd);

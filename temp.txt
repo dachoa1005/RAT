@@ -1,6 +1,0 @@
-client
-file_manager
-README.md
-server
-temp.txt
-test

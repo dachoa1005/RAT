@@ -9,4 +9,5 @@ run:
 
 clean:
 	rm -rf build
-
+	rm -rf recv_files/*
+	rm -rf *.txt

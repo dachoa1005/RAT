@@ -164,8 +164,9 @@ int main(int argc, const char **argv)
                 strcpy(tempBuffer, command.c_str());
                 send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
                 memset(tempBuffer, 0, sizeof(tempBuffer));
-                recv_file("temp.txt", FILE_SAVE_PLACE + "temp.txt", newSockDes);
-                ifstream fin(FILE_SAVE_PLACE + "temp.txt");
+                
+                recv_file("temp.txt", "temp.txt", newSockDes);
+                ifstream fin("temp.txt");
                 string line;
                 while(getline(fin, line))
                 {

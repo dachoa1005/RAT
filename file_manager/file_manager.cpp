@@ -10,12 +10,6 @@
 
 using namespace std;
 
-bool is_exist(string file_name, string file_path) // check if file_name exits in file_path
-{
-
-    return true;
-}
-
 bool create_file(string file_name, string file_path)
 {
     string path = file_path + "/" + file_name;
@@ -41,123 +35,6 @@ bool create_file(string file_path)
     }
     // cout << "File created" << endl;
     file.close();
-    return true;
-}
-
-bool delete_file(string file_path)
-{
-    
-    if (remove(file_path.c_str()) != 0)
-    {
-        // cout << "Error deleting file" << endl;
-        return false;
-    }
-    // cout << "File deleted" << endl;
-    return true;
-}
-
-bool delete_file(string file_name, string file_path)
-{
-    string path = file_path + "/" + file_name;
-    if (remove(path.c_str()) != 0)
-    {
-        // cout << "Error deleting file" << endl;
-        return false;
-    }
-    // cout << "File deleted" << endl;
-    return true;
-}
-
-bool copy_file(string file_name, string file_path, string dest_path)
-{
-    string src = file_path + "/" + file_name;
-    string dest = dest_path + "/" + file_name;
-    ifstream src_file(src);
-    if (!src_file.is_open())
-    {
-        cout << "Source file not found" << endl;
-        return false;
-    }
-    if (!create_file(file_name, dest_path))
-    {
-        cout << "Error creating destination file" << endl;
-        return false;
-    };
-    ofstream dest_file(dest);
-    string data;
-    while (!src_file.eof())
-    {
-        getline(src_file, data);
-        dest_file << data << endl;
-    }
-    cout << "Copy file done" << endl;
-    src_file.close();
-    dest_file.close();
-    return true;
-}
-
-bool move_file(string file_name, string file_path, string dest_path)
-{
-    string src_path = file_path + "/" + file_name;
-    if (!copy_file(file_name, file_path, dest_path))
-    {
-        cout << "Error copying file" << endl;
-        return false;
-    };
-    if (!delete_file(file_name, file_path))
-    {
-        cout << "Error deleting old file" << endl;
-        return false;
-    };
-    cout << "File moved" << endl;
-    return true;
-}
-
-bool create_folder(string folder_name, string folder_path)
-{
-    string path = folder_path + "/" + folder_name;
-    mkdir(path.c_str(), 0777);
-    if (errno == EEXIST)
-    {
-        cout << "Folder already exists" << endl;
-        return false;
-    }
-    else
-    {
-        cout << "Folder created" << endl;
-        return true;
-    }
-}
-
-bool delete_folder(string folder_name, string folder_path)
-{
-    string path = folder_path + "/" + folder_name;
-    if (!rmdir(path.c_str()))
-    {
-        cout << "Error deleting folder" << endl;
-        return false;
-    }
-    cout << "Folder deleted " << endl;
-    return true;
-}
-
-bool copy_folder(string folder_name, string folder_path, string dest_path)
-{
-    return true;
-}
-
-bool move_folder(string folder_name, string folder_path, string dest_path)
-{
-    return true;
-}
-
-bool list_folder(string folder_path)
-{
-    return true;
-}
-
-bool rename_folder(string folder_path, string dest_path)
-{
     return true;
 }
 
@@ -207,13 +84,5 @@ bool recv_file(string file_name, string file_path, int socket)
         memset(buffer, 0, 1024);
     }
     file.close();
-    return true;
-}
-
-bool kill_process(string process_name)
-{
-    string command = "killall " + process_name;
-    system(command.c_str());
-    cout << "Process killed" << endl;
     return true;
 }
