@@ -1,5 +1,0 @@
-build
-Makefile
-recv_files
-source
-temp.txt

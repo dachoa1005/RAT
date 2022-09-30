@@ -16,8 +16,6 @@
 
 using namespace std;
 
-string FILE_SAVE_PLACE{"/home/dachoa1005/WorkSpace/RAT/server/recv_files/"};
-
 
 int main(int argc, const char **argv)
 {
@@ -32,8 +30,17 @@ int main(int argc, const char **argv)
     cin >> portno;
     char const *serverIP = "127.0.0.1";
 
-    cout << "Waiting for client to connect" << endl;
 
+    //get file save location
+    system("pwd > pwd.txt");
+    ifstream pwdFile("pwd.txt");
+    string pwd;
+    pwdFile >> pwd;
+    string FILE_SAVE_PLACE = pwd + "/recv_files/";
+    pwdFile.close();
+    cout << FILE_SAVE_PLACE << endl;
+
+    cout << "Waiting for client to connect" << endl;
 
     struct sockaddr_in servAddr;
 
@@ -166,9 +173,6 @@ int main(int argc, const char **argv)
                 }
                 fin.close();
             }
-
-
-
             break;
         }
 

