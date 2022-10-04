@@ -163,10 +163,26 @@ int main(int argc, const char **argv)
             filepath = "";
             cout << "Receive file from client" << endl;
             memset(buffer, 0, sizeof(buffer));
-            cout << "Enter file path: ";
-            getline(cin, filepath);
-            strcpy(tempBuffer, filepath.c_str());
-            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); // send filepath to client
+            
+            while (flag == 0)
+            {
+                cout << "Enter file path: ";
+                getline(cin, filepath);
+                memset(tempBuffer, 0, sizeof(tempBuffer));
+                strcpy(tempBuffer, filepath.c_str());
+                send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); // send filepath to client
+                read(newSockDes, &flag, sizeof(flag));
+                if (flag == 0)
+                {
+                    cout << "File not found! Enter cancel to break" << endl;
+                }
+                else if (flag == -1)
+                {
+                    cout << "Cancel receiving file" << endl;
+                    break;
+                }
+            }
+            
             // cout << "Byte sent: " << n << endl;
             filename = filepath.substr(filepath.find_last_of("/\\") + 1);
             savepath = FILE_SAVE_PLACE + filename;
