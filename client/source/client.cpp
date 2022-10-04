@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     pwdFile >> pwd;
     string FILE_SAVE_PLACE = pwd+ "/recv_files/";
     pwdFile.close();
-    cout << FILE_SAVE_PLACE << endl;
+    // cout << FILE_SAVE_PLACE << endl;
 
     sockaddr_in sendSockAddr;
     bzero((char *)&sendSockAddr, sizeof(sendSockAddr));
@@ -81,18 +81,22 @@ int main(int argc, char const *argv[])
             memset(msg, 0, sizeof(msg));
             cout << "Receive file from server" << endl;
             recv(clientSockfd, msg, sizeof(msg), 0); // receive file name
+            if (strcmp(msg, "cancel") == 0 || strcmp(msg, "") == 0){
+                cout << "Cancel receive file" << endl;
+                break;
+            }
             cout << "File name: " << msg << endl;
-            filename = "new_" + string(msg);
+            filename = string(msg);
             savepath = FILE_SAVE_PLACE + filename;
             // memset(&msg,0,sizeof(msg)); //clear buffer before recive file
             recv_file(filename, savepath, clientSockfd);
-            cout << "Receive file success" << endl;
+            cout <<"File " << filename << " received." << endl;
             break;
         }
         case 2:
         {
             memset(msg, 0, sizeof(msg));
-            cout << "Sending file" << endl;
+            cout << "Send file to server" << endl;
             int n = recv(clientSockfd, msg, sizeof(msg), 0); // receive file path
             // cout << "Byte received: " << n << endl;
             cout << "File path: " << msg << endl;
@@ -100,7 +104,7 @@ int main(int argc, char const *argv[])
             filename = filepath.substr(filepath.find_last_of("/\\") + 1);
             cout << "File name: " << filename << endl;
             send_file(filename, filepath, clientSockfd);
-            cout << "Sending file success" << endl;
+            cout << "File " << filename << " sent." << endl;
             break;
         }
 

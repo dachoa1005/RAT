@@ -3,6 +3,7 @@
 
 #include <string>
 
+    bool isFileExist(std::string filepath);
     bool create_file(std::string file_name,std::string file_path);
     bool create_file(std::string file_path);
     bool delete_file(std::string file_name,std::string file_path);

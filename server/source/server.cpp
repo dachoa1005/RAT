@@ -5,17 +5,16 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
-#include <sys/types.h>  // for types
-#include <sys/socket.h> // for socket
+#include <sys/types.h>    // for types
+#include <sys/socket.h>   // for socket
 #include <sys/sendfile.h> // for sendfile()
-#include <sys/uio.h>    // for uio
-#include <netinet/in.h> // for sockaddr_in
+#include <sys/uio.h>      // for uio
+#include <netinet/in.h>   // for sockaddr_in
 #include <errno.h>
 #include <arpa/inet.h>
 #include <fstream>
 
 using namespace std;
-
 
 int main(int argc, const char **argv)
 {
@@ -30,15 +29,14 @@ int main(int argc, const char **argv)
     cin >> portno;
     char const *serverIP = "127.0.0.1";
 
-
-    //get file save location
+    // get file save location
     system("pwd > pwd.txt");
     ifstream pwdFile("pwd.txt");
     string pwd;
     pwdFile >> pwd;
     string FILE_SAVE_PLACE = pwd + "/recv_files/";
     pwdFile.close();
-    cout << FILE_SAVE_PLACE << endl;
+    // cout << FILE_SAVE_PLACE << endl;
 
     cout << "Waiting for client to connect" << endl;
 
@@ -87,13 +85,17 @@ int main(int argc, const char **argv)
     }
 
     cout << "Connected to Client" << endl;
-    
+
     int choice{0}; // selection
     char buffer[1024] = {};
     string filename{""};
     string filepath{""};
     string savepath{""};
     char tempBuffer[1024] = {};
+    int flag = 0; // to decide whether to send file or not
+                  // flag = 1: send file || flag = -1: cancel sending file || flag = 0: file not found
+
+    // check if file exist or not
 
     while (1)
     {
@@ -109,53 +111,78 @@ int main(int argc, const char **argv)
         write(newSockDes, &choice, sizeof(choice));
         // cout << "byte_write: " << byte_write << endl;
         switch (choice)
-        
+
         {
-        case 1://send file to client 
+        case 1: // send file to client
         {
             filepath = "";
             // filename = "";
             cout << "Send file to client" << endl;
             memset(buffer, 0, sizeof(buffer));
-            cout << "Enter file path: ";
-            getline(cin, filepath);
-            //get file name
-            filename = filepath.substr(filepath.find_last_of("/\\")+1);
-            // cout << filename << endl;
-            //send file name
-            strcpy(tempBuffer,filename.c_str());
-            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);// send file name
-            send_file(filename, filepath, newSockDes);
-            cout << "Send file success" << endl;
+            do
+            {
+                cout << "Enter file path: ";
+                getline(cin, filepath);
+                if (filepath == "cancel")
+                {
+                    flag = -1;
+                    cout << "Cancel sending file" << endl;
+                    strcpy(tempBuffer, "cancel");
+                    send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
+                    break;
+                }
+                if (isFileExist(filepath) == false)
+                {
+                    flag = 0;
+                    cout << "File not found! Enter cancel to break" << endl;
+                }
+                else
+                {
+                    flag = 1;
+                }
+            } while (flag == 0);
+
+            // get file name
+
+            if (flag == 1)
+            {
+                filename = filepath.substr(filepath.find_last_of("/\\") + 1);
+                // cout << filename << endl;
+                // send file name
+                memset(tempBuffer, 0, sizeof(tempBuffer));
+                strcpy(tempBuffer, filename.c_str());
+                send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); // send file name
+                send_file(filename, filepath, newSockDes);
+                cout << "File " << filename << " sent." << endl;
+            }
             break;
         }
-        
-        case 2: //receive file from client 
+
+        case 2: // receive file from client
         {
             filepath = "";
             cout << "Receive file from client" << endl;
             memset(buffer, 0, sizeof(buffer));
-            cout << "Enter file path: " << endl;
+            cout << "Enter file path: ";
             getline(cin, filepath);
-            // cout << "filepath: " << filepath << endl;
             strcpy(tempBuffer, filepath.c_str());
-            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); //send filepath to client
+            send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); // send filepath to client
             // cout << "Byte sent: " << n << endl;
-            filename = filepath.substr(filepath.find_last_of("/\\")+1);
-            cout << "filename: " << filename << endl;
+            filename = filepath.substr(filepath.find_last_of("/\\") + 1);
             savepath = FILE_SAVE_PLACE + filename;
             recv_file(filename, savepath, newSockDes);
+            cout << "File " << filename << " received." << endl;
             break;
         }
 
-        case 3: //terminal
+        case 3: // terminal
         {
             string command;
-            while(true)
+            while (true)
             {
                 cout << ">";
                 getline(cin, command);
-                if(command == "exit")
+                if (command == "exit")
                 {
                     strcpy(tempBuffer, command.c_str());
                     send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
@@ -164,11 +191,11 @@ int main(int argc, const char **argv)
                 strcpy(tempBuffer, command.c_str());
                 send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
                 memset(tempBuffer, 0, sizeof(tempBuffer));
-                
+
                 recv_file("temp.txt", "temp.txt", newSockDes);
                 ifstream fin("temp.txt");
                 string line;
-                while(getline(fin, line))
+                while (getline(fin, line))
                 {
                     cout << line << endl;
                 }
@@ -180,7 +207,6 @@ int main(int argc, const char **argv)
         case 0:
         {
             // exit
-            cout << "Exit" << endl;
             cout << "Server end the session" << endl;
             close(newSockDes);
             close(servSockfd);
@@ -194,7 +220,7 @@ int main(int argc, const char **argv)
             break;
         }
         }
-    }   
+    }
     close(newSockDes);
     close(servSockfd);
     return 0;

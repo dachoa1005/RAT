@@ -10,6 +10,21 @@
 
 using namespace std;
 
+bool isFileExist(string filepath)
+{
+    ifstream file(filepath.c_str());
+    if (file)
+    {
+        file.close();
+        return true;
+    }
+    else
+    {
+        file.close();
+        return false;
+    }
+}
+
 bool create_file(string file_name, string file_path)
 {
     string path = file_path + "/" + file_name;
