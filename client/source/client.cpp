@@ -5,9 +5,9 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
-#include <sys/types.h>  
-#include <sys/socket.h> 
-#include <sys/uio.h>    
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/uio.h>
 #include <netinet/in.h> // for sockaddr_in
 #include <errno.h>
 #include <arpa/inet.h>
@@ -15,7 +15,6 @@
 #include <netdb.h>
 
 using namespace std;
-
 
 int main(int argc, char const *argv[])
 {
@@ -32,12 +31,12 @@ int main(int argc, char const *argv[])
     cin >> portno;
     struct hostent *host = gethostbyname(serverIP);
 
-    //get file save location
+    // get file save location
     system("pwd > pwd.txt");
     ifstream pwdFile("pwd.txt");
     string pwd;
     pwdFile >> pwd;
-    string FILE_SAVE_PLACE = pwd+ "/recv_files/";
+    string FILE_SAVE_PLACE = pwd + "/recv_files/";
     pwdFile.close();
     // cout << FILE_SAVE_PLACE << endl;
 
@@ -66,6 +65,7 @@ int main(int argc, char const *argv[])
     string filename{""};
     string filepath{""};
     string savepath{""};
+    int flag = 0; // flag = 1: file exist || flag = 0: file not exist || flag = -1: cancel
     while (1)
     {
         cout << "----------------------------------------" << endl;
@@ -81,7 +81,8 @@ int main(int argc, char const *argv[])
             memset(msg, 0, sizeof(msg));
             cout << "Receive file from server" << endl;
             recv(clientSockfd, msg, sizeof(msg), 0); // receive file name
-            if (strcmp(msg, "cancel") == 0 || strcmp(msg, "") == 0){
+            if (strcmp(msg, "cancel") == 0 || strcmp(msg, "") == 0)
+            {
                 cout << "Cancel receive file" << endl;
                 break;
             }
@@ -90,32 +91,60 @@ int main(int argc, char const *argv[])
             savepath = FILE_SAVE_PLACE + filename;
             // memset(&msg,0,sizeof(msg)); //clear buffer before recive file
             recv_file(filename, savepath, clientSockfd);
-            cout <<"File " << filename << " received." << endl;
+            cout << "File " << filename << " received." << endl;
             break;
         }
         case 2:
         {
             memset(msg, 0, sizeof(msg));
             cout << "Send file to server" << endl;
-            int n = recv(clientSockfd, msg, sizeof(msg), 0); // receive file path
-            // cout << "Byte received: " << n << endl;
-            cout << "File path: " << msg << endl;
-            filepath = string(msg);
-            filename = filepath.substr(filepath.find_last_of("/\\") + 1);
-            cout << "File name: " << filename << endl;
-            send_file(filename, filepath, clientSockfd);
-            cout << "File " << filename << " sent." << endl;
+            flag = 0;
+            while (flag == 0)
+            {
+                recv(clientSockfd, msg, sizeof(msg), 0); // receive file path
+                // cout << "Byte received: " << n << endl;
+                if (strcmp(msg, "cancel") == 0)
+                {
+                    flag = -1;
+                    write(clientSockfd, &flag, sizeof(flag));
+                    cout << "Cancel send file" << endl;
+                    break;
+                }
+                filepath = string(msg);
+                if (isFileExist(filepath) == false)
+                {
+                    // cout << "File not exist" << endl;
+                    flag = 0;
+                    write(clientSockfd, &flag, sizeof(flag));
+                }
+                else
+                {
+                    flag = 1;
+                    write(clientSockfd, &flag, sizeof(flag));
+                    break;
+                }
+            }
+
+            if (flag == 1)
+            {
+                cout << "File path: " << msg << endl;
+                filepath = string(msg);
+                filename = filepath.substr(filepath.find_last_of("/\\") + 1);
+                cout << "File name: " << filename << endl;
+                send_file(filename, filepath, clientSockfd);
+                cout << "File " << filename << " sent." << endl;
+            }
             break;
         }
 
         case 3:
-        {   
+        {
             cout << "Terminal" << endl;
             fstream file;
             string command;
             while (true)
             {
-                file.open("temp.txt");  
+                file.open("temp.txt");
                 memset(msg, 0, sizeof(msg));
                 recv(clientSockfd, msg, sizeof(msg), 0);
                 if (strcmp(msg, "exit") == 0)
@@ -123,19 +152,19 @@ int main(int argc, char const *argv[])
                     cout << "Exit command" << endl;
                     break;
                 }
-                
+
                 command = string(msg);
                 cout << "Command: " << command << endl;
                 command = command + " > temp.txt";
                 system(command.c_str());
                 string line;
-                while(getline(file, line))
+                while (getline(file, line))
                 {
                     cout << line << endl;
                 }
                 // file << "";
                 file.close();
-                 
+
                 send_file("temp.txt", "temp.txt", clientSockfd);
             }
             break;
@@ -149,7 +178,7 @@ int main(int argc, char const *argv[])
         }
         default:
         {
-            cout << "Server: " << msg << endl;
+            cout << "Server: " << choice << endl;
             break;
         }
         }

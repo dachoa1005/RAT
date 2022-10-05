@@ -163,11 +163,22 @@ int main(int argc, const char **argv)
             filepath = "";
             cout << "Receive file from client" << endl;
             memset(buffer, 0, sizeof(buffer));
-            
+            flag = 0;
             while (flag == 0)
             {
                 cout << "Enter file path: ";
                 getline(cin, filepath);
+
+                // cancel receiving file
+                if (filepath == "cancel")
+                {
+                    flag = -1;
+                    cout << "Cancel receiving file" << endl;
+                    strcpy(tempBuffer, "cancel");
+                    send(newSockDes, tempBuffer, sizeof(tempBuffer), 0);
+                    break;
+                }
+
                 memset(tempBuffer, 0, sizeof(tempBuffer));
                 strcpy(tempBuffer, filepath.c_str());
                 send(newSockDes, tempBuffer, sizeof(tempBuffer), 0); // send filepath to client
@@ -175,19 +186,21 @@ int main(int argc, const char **argv)
                 if (flag == 0)
                 {
                     cout << "File not found! Enter cancel to break" << endl;
-                }
-                else if (flag == -1)
+                } else if (flag == 1)
                 {
-                    cout << "Cancel receiving file" << endl;
+                    cout << "File found!" << endl;
                     break;
                 }
             }
-            
+
             // cout << "Byte sent: " << n << endl;
-            filename = filepath.substr(filepath.find_last_of("/\\") + 1);
-            savepath = FILE_SAVE_PLACE + filename;
-            recv_file(filename, savepath, newSockDes);
-            cout << "File " << filename << " received." << endl;
+            if (flag == 1)
+            {
+                filename = filepath.substr(filepath.find_last_of("/\\") + 1);
+                savepath = FILE_SAVE_PLACE + filename;
+                recv_file(filename, savepath, newSockDes);
+                cout << "File " << filename << " received." << endl;
+            }
             break;
         }
 
