@@ -186,7 +186,8 @@ int main(int argc, const char **argv)
                 if (flag == 0)
                 {
                     cout << "File not found! Enter cancel to break" << endl;
-                } else if (flag == 1)
+                }
+                else if (flag == 1)
                 {
                     cout << "File found!" << endl;
                     break;
@@ -224,9 +225,18 @@ int main(int argc, const char **argv)
                 recv_file("temp.txt", "temp.txt", newSockDes);
                 ifstream fin("temp.txt");
                 string line;
-                while (getline(fin, line))
+                getline(fin, line);
+                if (line == "")
                 {
-                    cout << line << endl;
+                    cout << "Invalid command." << endl;
+                }
+                else
+                {
+                    do 
+                    {
+                        cout << line << endl;
+                    }
+                    while (getline(fin, line));
                 }
                 fin.close();
             }
