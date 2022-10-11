@@ -1,6 +1,0 @@
-build
-Makefile
-pwd.txt
-recv_files
-source
-temp.txt
